@@ -1,15 +1,13 @@
 FROM ubuntu:latest as intermediate
+MAINTAINER Tyler Akins <fidian@rumkin.com>
 
 ENV LC_ALL C
 
-COPY apple-bash/bin/* /usr/local/bin/
-COPY bash/bin/* /usr/local/bin/
-COPY fish/bin/* /usr/local/bin/
+COPY apple-bash/bin/* \
+    bash/bin/* \
+    dash/bin/* \
+    fish/bin/* \
+    zsh/bin/* \
+    containers/multishell/update-links /usr/local/bin/
 
-COPY containers/multishell/update-links /
-RUN bash /update-links
-
-
-FROM ubuntu:latest
-MAINTAINER Tyler Akins <fidian@rumkin.com>
-COPY --from=intermediate /usr/local/bin/ /usr/local/bin/
+RUN bash /usr/local/bin/update-links
