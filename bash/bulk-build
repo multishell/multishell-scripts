@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+tryToBuild() {
+    local ver
+
+    ver=$1
+    title "$ver: make (parallel)"
+    make -j4 && return 0
+    title "$ver: make (serial)"
+    make && return 0
+
+    if [[ -f parse.y ]]; then
+        touch parse.y
+    fi
+
+    title "$ver: make (parallel, try 2)"
+    make -j4 && return 0
+    title "$ver: make (serial, try 2)"
+    make && return 0
+
+    return 1
+}
+
+title() {
+    echo -n $'\E]2;'"$*"$'\E\\'
+}
+
+bulkBuild() {
+    local ver
+
+    ver=$1
+    echo "Building version: $ver"
+    (
+        set -x
+        cd git
+        title "$ver: Clean"
+        git clean -x -d -f || exit 1
+        git checkout . || exit 1
+        git checkout "ms_$ver" || exit 1
+        title "$ver: Configure"
+        ./configure || exit 1
+        tryToBuild "$ver" || exit 1
+        strip bash || exit 1
+        builtVersion=$(./bash -c 'echo "$BASH_VERSION"');
+        echo "$builtVersion" | grep -Eq 'release|rc' || exit 1
+        saveVersion=bash-${builtVersion%(*}${builtVersion#*)}
+        saveVersion=${saveVersion%-release}
+        [[ ! -f "../bin/${saveVersion}" ]] || exit 1
+        mv bash "../bin/${saveVersion}" || exit 1
+    ) || {
+        echo "Problem building version $ver"
+        exit 1
+    }
+}
+
+cd "${0%/*}" || exit 1
+
+if [[ "$#" -gt 0 ]]; then
+    for version in "$@"; do
+        bulkBuild "$version" || exit
+    done
+else
+    echo "Specify versions to build"
+fi

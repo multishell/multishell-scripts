@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+clearLine() {
+    printf "%s\r%s" $'\E[2K' "$*"
+}
+
+cd "/usr/local/bin/" || exit 1
+
+for shell in apple-bash bash fish; do
+    (
+        echo "$shell"
+
+        # Clean out old symbolic links
+        for binary in "$shell-"*; do
+            if [[ -h "$binary" ]]; then
+                rm "$binary"
+            fi
+        done
+
+        # Create new symbolic links
+        # Thankfully this is a sorted list
+        for binary in "$shell-"*; do
+            clearLine "    $binary"
+            shorter=$binary
+
+            while [[ "$shorter" == *.* ]]; do
+                shorter=${shorter%.*}
+               
+                if [[ -h "$shorter" ]]; then
+                    rm -f "$shorter"
+                fi
+
+                if [[ ! -f "$shorter" ]]; then
+                    ln -s "$binary" "$shorter"
+                fi
+            done
+        done
+        clearLine
+    )
+done

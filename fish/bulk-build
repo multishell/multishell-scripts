@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+
+tryToAutoconf() {
+    [[ -f configure ]] && return 0
+
+    title "$ver: Autoreconf"
+    autoreconf --no-recursive && return 0
+
+    return 1
+}
+
+tryToBuild() {
+    local ver
+
+    ver=$1
+    title "$ver: make (parallel)"
+    make -j4 && return 0
+
+    # During parallel builds, this file could become useless
+    if [[ -f builtin_help.c ]]; then
+        git clean -d -f builtin_help.c || :
+        git checkout builtin_help.c || :
+    fi
+
+    title "$ver: make (serial)"
+    make && return 0
+
+    return 1
+}
+
+tryToConfigure() {
+    title "$ver: Configure"
+    ./configure && return 0
+
+    # Sometimes the configure script fails, yet succeeds the second time.
+    sleep 1
+    title "$ver: Configure (retry)"
+    ./configure && return 0
+
+    return 1
+}
+
+title() {
+    echo -n $'\E]2;'"$*"$'\E\\'
+}
+
+bulkBuild() {
+    local ver
+
+    ver=$1
+    echo "Building version: $ver"
+    (
+        set -x
+        cd git
+        title "$ver: Clean"
+        git clean -x -d -f || exit 1
+        git checkout . || exit 1
+        git checkout "ms_$ver" || exit 1
+
+        if [[ ! -f version ]]; then
+            # Version 2.5b1 and later use this file to determine the version
+            # number. It's probably there in the tar files but I use the git
+            # repository in order to get beta versions as well.
+            echo "$ver" > version
+        fi
+
+        tryToAutoconf || exit 1
+        tryToConfigure || exit 1
+        tryToBuild "$ver" || exit 1
+        strip fish || exit 1
+        builtVersion=$(./fish -v 2>&1)
+        saveVersion=fish-${builtVersion##* }
+        [[ ! -f "../bin/${saveVersion}" ]] || exit 1
+        mv fish "../bin/${saveVersion}" || exit 1
+    ) || {
+        echo "Problem building version $ver"
+        exit 1
+    }
+}
+
+cd "${0%/*}" || exit 1
+
+if [[ "$#" -gt 0 ]]; then
+    for version in "$@"; do
+        bulkBuild "$version" || exit
+    done
+else
+    echo "Specify versions to build"
+fi

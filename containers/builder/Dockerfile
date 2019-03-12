@@ -1,0 +1,23 @@
+FROM ubuntu:latest
+RUN apt update && apt install -y \
+    autoconf \
+    bison \
+    bsdmainutils \
+    build-essential \
+    cmake \
+    doxygen \
+    gettext \
+    git \
+    groff-base \
+    libncurses5-dev \
+    libpcre2-dev \
+    libxext-dev \
+    libxt-dev \
+    ncurses-dev
+
+# Works with Alpine too
+# FROM alpine:latest
+# RUN apk add --no-cache build-base bash git bison
+
+ENV LC_ALL C
+CMD bash
