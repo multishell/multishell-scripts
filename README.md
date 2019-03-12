@@ -32,6 +32,10 @@ Sorry for the confusion. Here's a few examples.
 * Command: The executable's name when it is installed to `/usr/local/bin/`.
 * Internal version: What the shell reports as its version. Apple's Bash is especially unhelpful in this regard.
 
-In addition to the many executables, there's symlinks to get the most recent version of a particular release. So, running `bash-3.2` would actually run `bash-3.2.57`. This does not work well with Zsh because their version numbers don't include the patch level if it is 0. Thus, running `zsh-5.6` will not run the newest in the 5.6.x series. Instead, you must specify the version number yourself; `zsh-5.6.2`, `zsh-5.6.1`, and `zsh-5.6` are all commands. The symlink does get made for `zsh-5`, which would run the newest in the 5.x series. Apple's Bash also has a funky versioning scheme, so use the full version number there when you care about which one you get.
+In addition to the many executables, there's symlinks to get the most recent version of a particular release. So, running `bash-3.2` would actually run `bash-3.2.57`.
 
-Dash doesn't have a way to check the version number of the binary. You'll have to just trust me that I did not mess up the numbers.
+**Apple Bash:** This has a funky versioning scheme, so use the full version number there when you care about which one you get. You can't run the shell and get the version number because it often reports `3.2.57(2)`. The symbolic links are created, but are essentially useless.
+
+**Dash:** There's no way to double-check the version number of the binary beyond feature/bug detection.
+
+**Zsh:** The symbolic links don't work well because the version number doesn't include the patch level if it's zero. Thus, running `zsh-5.6` will not run the newest in the 5.6.x series. Instead, you must specify the version number yourself; `zsh-5.6.2`, `zsh-5.6.1`, and `zsh-5.6` are all different commands. The symlink will exist for `zsh-5`, which would run the newest in the 5.x series.
