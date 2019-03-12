@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+tryToBuild() {
+    local ver
+
+    ver=$1
+
+    # Try to build some special files first before the parallel build
+    title "$ver: Makemod"
+    make Makemod && :
+
+    if [[ -f Makemod ]]; then
+        make -f Makemod signames.o || :
+    fi
+
+    title "$ver: make (parallel)"
+    make -j4 && return 0
+    title "$ver: make (serial)"
+    make && return 0
+
+    return 1
+}
+
+title() {
+    echo -n $'\E]2;'"$*"$'\E\\'
+}
+
+bulkBuild() {
+    local ver
+
+    ver=$1
+    echo "Building version: $ver"
+    (
+        set -x
+        cd git
+        title "$ver: Clean"
+        git clean -x -d -f || exit 1
+        git checkout . || exit 1
+        git checkout "ms_$ver" || exit 1
+        title "$ver: Configure"
+        ./configure || exit 1
+        cd Src
+        tryToBuild "$ver" || exit 1
+        strip zsh || exit 1
+        builtVersion=$(./zsh -c 'echo "$ZSH_VERSION"');
+        saveVersion=zsh-${builtVersion}
+        [[ ! -f "../../bin/${saveVersion}" ]] || exit 1
+        mv zsh "../../bin/${saveVersion}" || exit 1
+    ) || {
+        echo "Problem building version $ver"
+        exit 1
+    }
+}
+
+cd "${0%/*}" || exit 1
+
+if [[ "$#" -gt 0 ]]; then
+    for version in "$@"; do
+        bulkBuild "$version" || exit
+    done
+else
+    echo "Specify versions to build"
+fi
