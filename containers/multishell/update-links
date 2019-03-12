@@ -4,37 +4,57 @@ clearLine() {
     printf "%s\r%s" $'\E[2K' "$*"
 }
 
+linkFile() {
+    local binary=$1 shorter=$2
+
+    if [[ -h "$shorter" ]]; then
+        rm -f "$shorter"
+    fi
+
+    if [[ ! -f "$shorter" ]]; then
+        ln -s "$binary" "$shorter"
+    fi
+}
+
 cd "/usr/local/bin/" || exit 1
 
-for shell in apple-bash bash fish; do
-    (
-        echo "$shell"
-
-        # Clean out old symbolic links
-        for binary in "$shell-"*; do
-            if [[ -h "$binary" ]]; then
-                rm "$binary"
-            fi
-        done
-
-        # Create new symbolic links
-        # Thankfully this is a sorted list
-        for binary in "$shell-"*; do
-            clearLine "    $binary"
-            shorter=$binary
-
-            while [[ "$shorter" == *.* ]]; do
-                shorter=${shorter%.*}
-               
-                if [[ -h "$shorter" ]]; then
-                    rm -f "$shorter"
-                fi
-
-                if [[ ! -f "$shorter" ]]; then
-                    ln -s "$binary" "$shorter"
-                fi
-            done
-        done
-        clearLine
-    )
+# Clean out old symbolic links
+for binary in *; do
+    if [[ -h "$binary" ]]; then
+        rm "$binary"
+    fi
 done
+
+# Create new symbolic links
+# Thankfully this is a sorted list
+for binary in *; do
+    clearLine "$binary"
+    shorter=$binary
+
+    while [[ "$shorter" == *.* ]]; do
+        if [[ "$shorter" == *.*-* ]]; then
+            shorter=${shorter%-*}
+        elif [[ "$shorter" == *[[:digit:]]*[[:alpha:]]* ]]; then
+            # Trim numbers:
+            #   1.2.3-pre1 -> 1.2.3-pre
+            #   4.3b6 -> 4.3b,
+            #   1.2beta -> 1.2beta
+            while [[ "$shorter" == *[^[:alpha:]] ]]; do
+                shorter=${shorter:0:${#shorter} - 1}
+            done
+
+            # Trim the letters:
+            #   1.2.3-pre -> 1.2.3
+            #   4.3b -> 4.3
+            #   1.2beta -> 1.2
+            while [[ "$shorter" == *[^[:digit:]] ]]; do
+                shorter=${shorter:0:${#shorter} - 1}
+            done
+        else
+            shorter=${shorter%.*}
+        fi
+
+        linkFile "$binary" "$shorter"
+    done
+done
+clearLine
