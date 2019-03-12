@@ -42,7 +42,7 @@ bulkBuild() {
         tryToBuild "$ver" || exit 1
         strip bash || exit 1
         builtVersion=$(./bash -c 'echo "$BASH_VERSION"');
-        echo "$builtVersion" | grep -Eq 'release|rc|beta' || exit 1
+        echo "$builtVersion" | grep -Eq 'release|rc|beta|alpha' || exit 1
         saveVersion=bash-${builtVersion%(*}${builtVersion#*)}
         saveVersion=${saveVersion%-release}
         [[ ! -f "../bin/${saveVersion}" ]] || exit 1
