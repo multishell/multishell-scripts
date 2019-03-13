@@ -9,10 +9,13 @@ RUN apt update && apt install -y \
     gettext \
     git \
     groff-base \
+    libext2fs-dev \
     libncurses5-dev \
     libpcre2-dev \
     libxext-dev \
     libxt-dev \
+    libz-dev \
+    linux-headers-generic \
     ncurses-dev
 
 # Works with Alpine too

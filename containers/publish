@@ -9,8 +9,10 @@ case "$1" in
         ;;
 
     all)
-        for dockerfile in */Dockerfile; do
-            ./publish "${dockerfile%/*}"
+        for shellDir in ../*/bin; do
+            shell=${shellDir%/*}
+            shell=${shell##*/}
+            ./publish "${shell}"
         done
         ;;
 
