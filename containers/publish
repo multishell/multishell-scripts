@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+cd "${0%/*}" || exit 1
+today=$(date +%Y%m%d)
+
+case "$1" in
+    "")
+        echo "You must specify a project to publish or use 'all' to publish everything." >&2
+        exit 1
+        ;;
+
+    all)
+        for dockerfile in */Dockerfile; do
+            ./publish "${dockerfile%/*}"
+        done
+        ;;
+
+    multishell)
+        docker push fidian/multishell:latest "fidian/multishell:$today"
+        ;;
+
+    *)
+        image="fidian/multishell-$1"
+        docker push "$image:latest" "$image:$today"
+        ;;
+esac

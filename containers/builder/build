@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-cd "${0%/*}" || exit 1
-docker build -t fidian/multishell-builder . || exit 1

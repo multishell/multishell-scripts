@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+cleanup() {
+    rm -f "$bin/update-links"
+}
+
+cd "${0%/*}" || exit 1
+today=$(date +%Y%m%d)
+
+case "$1" in
+    "")
+        echo "You must specify a project to build or use 'all' to build everything." >&2
+        exit 1
+        ;;
+
+    all)
+        ./build builder
+
+        for shellDockerfile in */Dockerfile; do
+            shell=${shellDockerfile%/*}
+
+            if [[ "$shell" != "builder" ]] && [[ "$shell" != "multishell" ]]; then
+                ./build "$shell"
+            fi
+        done
+
+        ./build multishell
+        ;;
+
+    builder)
+        cd "$1" || exit
+        image=fidian/multishell-builder
+        docker build -t "$image:latest" -t "$image:$today" -f Dockerfile .
+        ;;
+
+    multishell)
+        cd "$1" || exit
+        image=fidian/multishell
+        docker build -t "$image:latest" -t "$image:$today" -f Dockerfile .
+        ;;
+
+    *)
+        if [[ ! -d "$1" ]]; then
+            echo "No such folder: $1" >&2
+            exit 1
+        fi
+
+        cd "$1" || exit
+        bin="../../$1/bin"
+        scripts="../../scripts"
+        image="fidian/multishell-$1"
+
+        trap cleanup EXIT
+        cp "$scripts/update-links" "$bin"
+        docker build -t "$image:latest" -t "$image:$today" -f Dockerfile "$bin"
+        ;;
+esac

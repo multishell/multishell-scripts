@@ -1,13 +1,9 @@
-FROM ubuntu:latest as intermediate
+FROM ubuntu:latest
 MAINTAINER Tyler Akins <fidian@rumkin.com>
 
 ENV LC_ALL C
-
-COPY apple-bash/bin/* \
-    bash/bin/* \
-    dash/bin/* \
-    fish/bin/* \
-    zsh/bin/* \
-    scripts/update-links /usr/local/bin/
-
-RUN /usr/local/bin/update-links
+COPY --from=fidian/multishell-apple-bash:latest /usr/local/bin/ /usr/local/bin
+COPY --from=fidian/multishell-bash:latest /usr/local/bin/ /usr/local/bin
+COPY --from=fidian/multishell-dash:latest /usr/local/bin/ /usr/local/bin
+COPY --from=fidian/multishell-fish:latest /usr/local/bin/ /usr/local/bin
+COPY --from=fidian/multishell-zsh:latest /usr/local/bin/ /usr/local/bin
