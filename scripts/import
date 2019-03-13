@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+set -eEu -o pipefail
+rm -rf git
+mkdir git
+
+(
+    cd git || exit 1
+    git init
+)
+
+while read -r f; do
+    version=${f#*-}
+    version=${version%.tar*}
+
+    echo "$f = $version"
+
+    # Cleanse git folder
+    rm -rf git2
+    mkdir git2
+    mv git/.git git2/
+    rm -rf git
+    mv git2 git
+
+    (
+        cd git
+        git checkout -b "ms_$version"
+        
+        case "$f" in
+            *.tar.gz)
+                tar xvfz "../$f" --strip=1
+                ;;
+
+            *.tar.xz)
+                tar xvfJ "../$f" --strip=1
+                ;;
+
+            *)
+                echo "UNKNOWN FILE TYPE: $f"
+                echo "PAUSING SO YOU SEE THIS MESSAGE"
+                # shellcheck disable=SC2034
+                read -r LINE
+                exit 1
+                ;;
+        esac
+
+        git add .
+        git commit -m "$version"
+        git tag "$version"
+    ) || exit 1
+done < <(
+    # shellcheck disable=SC2012
+    ls dash-* | sort -V
+)
