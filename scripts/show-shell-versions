@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+
+showVersions() {
+    local indent line
+
+    indent=$1
+    shift
+
+    if [[ $# == 0 ]]; then
+        return
+    fi
+
+    printf -v line ", %s" "$@"
+    echo "${indent}* ${line#, }"
+}
+
+groupAndShowVersions() {
+    local groups series versions
+
+    groups=()
+    
+    while [[ "$1" != -- ]]; do
+        groups+=("$1.")
+        shift
+    done
+
+    groups+=("")
+    shift
+
+    echo "    * ${groups[0]}x series"
+    versions=()
+
+    while [[ $# != 0 ]]; do
+        if [[ "$1" != "${groups[0]}"* ]]; then
+            showVersions "        " "${versions[@]}"
+            groups=("${groups[@]:1}")
+            versions=()
+
+            if [[ -n "${groups[0]}" ]]; then
+                series=${groups[0]}x
+            else
+                series=UNKNOWN
+            fi
+
+            echo "    * $series series"
+        fi
+
+        versions+=("$1")
+        shift
+    done
+
+    showVersions "        " "${versions[@]}"
+}
+
+cd "${0%/*}/.." || exit 1
+
+for bindir in */bin/; do
+    shell=${bindir%%/*}
+    echo "* $shell"
+    versions=()
+
+    while read -r cmd; do
+        cmd=${cmd##*/}
+        cmd=${cmd#$shell-}
+        versions+=("$cmd")
+    done < <(
+        # shellcheck disable=SC2012
+        ls "$bindir/"* | sort -V
+    )
+
+    case $shell in
+        bash)
+            groupAndShowVersions 2 3.00 3.1 3.2 4.0 4.1 4.2 4.3 4.4 5.0 -- "${versions[@]}"
+            ;;
+
+        fish)
+            groupAndShowVersions 1 2 3 -- "${versions[@]}"
+            ;;
+
+        zsh)
+            groupAndShowVersions 3 4 5 -- "${versions[@]}"
+            ;;
+
+        *)
+            # Show all versions
+            showVersions "    " "${versions[@]}"
+            ;;
+    esac
+done

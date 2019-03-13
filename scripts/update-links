@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+#
+# Run within the container to set up symlinks to find the most recent version
+# for a given major number or major + minor.
 
 clearLine() {
     printf "%s\r%s" $'\E[2K' "$*"

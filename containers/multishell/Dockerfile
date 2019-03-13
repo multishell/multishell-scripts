@@ -8,6 +8,6 @@ COPY apple-bash/bin/* \
     dash/bin/* \
     fish/bin/* \
     zsh/bin/* \
-    containers/multishell/update-links /usr/local/bin/
+    scripts/update-links /usr/local/bin/
 
-RUN bash /usr/local/bin/update-links
+RUN /usr/local/bin/update-links
