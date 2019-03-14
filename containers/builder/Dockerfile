@@ -6,6 +6,7 @@ RUN apt update && apt install -y \
     build-essential \
     cmake \
     doxygen \
+    gdb \
     gettext \
     git \
     groff-base \
@@ -16,7 +17,8 @@ RUN apt update && apt install -y \
     libxt-dev \
     libz-dev \
     linux-headers-generic \
-    ncurses-dev
+    ncurses-dev \
+    xutils-dev
 
 # Works with Alpine too
 # FROM alpine:latest
