@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+tryToBuild() {
+    local ver
+
+    ver=$1
+
+    title "$ver: make (parallel)"
+    make -j4 && return 0
+    title "$ver: make (serial)"
+    make && return 0
+
+    return 1
+}
+
+title() {
+    echo -n $'\E]2;'"$*"$'\E\\'
+}
+
+bulkBuild() {
+    local ver
+
+    ver=$1
+    echo "Building version: $ver"
+    (
+        set -x
+        cd git
+        title "$ver: Clean"
+        git clean -x -d -f || exit 1
+        git checkout . || exit 1
+        git checkout "ms_$ver" || exit 1
+
+        if [[ -f configure.in ]] || [[ -f configure.ac ]]; then
+            title "$ver: Configure"
+
+            if [[ -f configure ]]; then
+                ./configure || exit 1
+            else
+                autoreconf -i || exit 1
+                ./configure || exit 1
+            fi
+        else
+            if [[ -f "config/config.linux" ]]; then
+                cp config/config.linux ./config.h || exit 1
+            fi
+
+            if [[ -f "config/linux" ]]; then
+                cp config/linux ./config.h || exit 1
+            fi
+        fi
+
+        if [[ ! -f Makefile ]]; then
+            xmkmf || exit 1
+        fi
+
+        tryToBuild "$ver" || exit 1
+        strip tcsh || exit 1
+        # Need to clear the environment so tcsh doesn't crash with unknown LS_COLORS
+        # shellcheck disable=SC2016
+        builtVersion=$(echo 'echo "$version"' | env -i ./tcsh | awk '{print $2}');
+        saveVersion=tcsh-${builtVersion}
+        [[ ! -f "../bin/${saveVersion}" ]] || exit 1
+        mv tcsh "../bin/${saveVersion}" || exit 1
+    ) || {
+        echo "Problem building version $ver"
+        exit 1
+    }
+}
+
+cd "${0%/*}" || exit 1
+
+if [[ "$#" -gt 0 ]]; then
+    for version in "$@"; do
+        bulkBuild "$version" || exit
+    done
+else
+    echo "Specify versions to build"
+fi
