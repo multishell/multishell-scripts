@@ -41,6 +41,8 @@ Available Versions
         * 3.0b1, 3.0.0, 3.0.1, 3.0.2
 * sash
     * 3.4, 3.4-fmb, 3.5, 3.5-fmb, 3.6, 3.6-fb, 3.7, 3.7-fb, 3.8
+* tcsh
+    * 6.00.00, 6.00.01, 6.00.02, 6.00.03, 6.01.00, 6.02.00, 6.03.00, 6.04.00, 6.05.00, 6.06.00, 6.06.01, 6.06.02, 6.06.03, 6.06.04, 6.07.00, 6.07.01, 6.07.02, 6.07.03, 6.07.04, 6.07.05, 6.07.06, 6.07.07, 6.07.08, 6.07.09, 6.07.10, 6.07.12, 6.07.13, 6.08.00, 6.08.01, 6.08.02, 6.08.03, 6.08.04, 6.08.05, 6.08.06, 6.08.07, 6.09.00, 6.09.01, 6.09.02, 6.09.03, 6.09.04, 6.10.00, 6.10.01, 6.10.02, 6.11.00, 6.11.01, 6.11.03, 6.11.04, 6.11.05, 6.12.00, 6.12.01, 6.12.02, 6.12.03, 6.13.00, 6.13.01, 6.13.02, 6.13.03, 6.13.04, 6.13.05, 6.13.06, 6.13.07, 6.13.08, 6.13.09, 6.13.10, 6.14.00, 6.14.01, 6.14.02, 6.14.03, 6.14.04, 6.14.05, 6.14.06, 6.14.07, 6.15.00, 6.15.01, 6.15.02, 6.16.00, 6.16.01, 6.17.00, 6.17.01, 6.17.02, 6.17.03, 6.17.04, 6.17.05, 6.17.06, 6.17.07, 6.17.08, 6.17.09, 6.17.10, 6.18.00, 6.18.01, 6.18.02, 6.18.03, 6.18.04, 6.18.05, 6.19.00, 6.19.01, 6.20.00
 * zsh
     * 3.x series
         * 3.0.8, 3.1.7, 3.1.8, 3.1.9
@@ -71,14 +73,16 @@ Sorry for the confusion. Here's a few examples.
 | Fish                | 2.7b1    | ms_2.7b1    | fish-2.7b1          | 2.7b1              |
 | Sash                | 3.7      | ms_3.7      | sash-3.7            | 3.7                |
 | Sash (plus patches) | 3.7-fmb  | ms_3.7-fmb  | sash-3.7-fmb        | 3.7-fmb            |
+| Tcsh                | 6.06     | ms_6.06     | tcsh-6.06.00        | 6.06.00            |
+| Tcsh                | 6.20.00  | ms_6.20.00  | tcsh-6.20.00        | 6.20.00            |
 | Zsh                 | 5.3      | ms_5.3      | zsh-5.3             | 5.3                |
 | Zsh                 | 5.3.1    | ms_5.3.1    | zsh-5.3.1           | 5.3.1              |
 
 * Shell: The name of the type of shell that was compiled.
-* Tag: The tag name in our version of the source repository for the original source before any necessary modifications were made.
-* Branch: The branch name in our version of the source repository. This contains additional commits in order to make the source code compile.
-* Command: The executable's name when it is installed to `/usr/local/bin/`.
-* Internal version: What the shell reports as its version. Apple's Bash is especially unhelpful in this regard.
+* Tag: The tag name in our version of the source repository for the original source before any necessary modifications were made. This version number matches the version number of the source distribution.
+* Branch: The branch name in our version of the source repository. This contains additional commits in order to make the source code compile. This version number matches the version number of the source distribution.
+* Command: The executable's name when it is installed to `/usr/local/bin/`. This version number can be different and matches the internal version where applicable. Notibaly, you can see this more with Apple's Bash and some of the Bash releases, such as "3.2" in the above list.
+* Internal version: What the shell reports as its version. Dash doesn't seem to have this set anywhere. Apple's Bash is especially unhelpful because it reports a version but you can't really use it for determining what version of Bash is running.
 
 In addition to the many executables, there's symlinks to get the most recent version of a particular release. So, running `bash-3.2` would actually run `bash-3.2.57`.
 
@@ -86,4 +90,12 @@ In addition to the many executables, there's symlinks to get the most recent ver
 
 **Dash:** There's no way to double-check the version number of the binary beyond feature/bug detection.
 
+**Tcsh:** I used tar files for the early releases and git tags for later versions, which is why the version number scheme differs.
+
 **Zsh:** The symbolic links don't work well because the version number doesn't include the patch level if it's zero. Thus, running `zsh-5.6` will not run the newest in the 5.6.x series. Instead, you must specify the version number yourself; `zsh-5.6.2`, `zsh-5.6.1`, and `zsh-5.6` are all different commands. The symlink will exist for `zsh-5`, which would run the newest in the 5.x series.
+
+
+Changes To The Shells
+---------------------
+
+Most builds needed changes in order to work within the Docker container. The patches are aimed to be as minimal as possible. All of the source repositories are [hosted on GitHub](https://github.com/multishell).
