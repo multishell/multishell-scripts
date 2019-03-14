@@ -9,4 +9,4 @@ Source: https://git.kernel.org/pub/scm/utils/dash/dash.git/refs/tags
 Build Notes
 -----------
 
-* No version-specific notes were necessary.
+No version-specific notes were necessary.

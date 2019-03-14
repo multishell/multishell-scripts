@@ -1,5 +1,11 @@
+Fish
+====
+
 Source: https://fishshell.com/
 
+
+Build Notes
+-----------
 
 1.16.0 - Using the internal version of wcsncasecmp because the system-provided version has a fourth parameter. 63e9758 Also had to use a file mode with `__open_missing_mode ()`. fe24042
 
@@ -34,15 +40,3 @@ Source: https://fishshell.com/
 1.23.1 - Fixed version number in `configure.ac`.
 
 2.5b1 - First build that looks for a `version` file.
-
-
-Patches to fix things:
-
- * `__open_missing_mode ()` fe24042
-git cherry-pick -x fe24042
-
- * `wcsncasecmp` 32c64f2
-git cherry-pick -x 32c64f2
-
- * `wint_t` 0e8b747
-git cherry-pick -x 0e8b747
