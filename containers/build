@@ -8,7 +8,7 @@ set -eEu -o pipefail
 cd "${0%/*}" || exit 1
 today=$(date +%Y%m%d)
 
-case "$1" in
+case "${1-}" in
     "")
         echo "You must specify a project to build or use 'all' to build everything." >&2
         exit 1
@@ -23,6 +23,7 @@ case "$1" in
             ./build "$shell"
         done
 
+        ./build small
         ./build multishell
         ;;
 
@@ -37,6 +38,13 @@ case "$1" in
         echo "*********** $1"
         cd "$1" || exit
         image=fidian/multishell
+        docker build -t "$image:latest" -t "$image:$today" -f Dockerfile .
+        ;;
+
+    small)
+        echo "*********** $1"
+        cd "$1" || exit
+        image=fidian/multishell-small
         docker build -t "$image:latest" -t "$image:$today" -f Dockerfile .
         ;;
 
