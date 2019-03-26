@@ -18,6 +18,8 @@ RUN apt update && apt install -y \
     libz-dev \
     linux-headers-generic \
     ncurses-dev \
+    perl \
+    vim \
     xutils-dev
 
 # Works with Alpine too
