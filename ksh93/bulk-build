@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+title() {
+    echo -n $'\E]2;'"$*"$'\E\\'
+}
+
+bulkBuild() {
+    local ver
+
+    ver=$1
+    echo "Building version: $ver"
+    (
+        set -x
+        cd git
+        title "$ver: Clean"
+        git clean -x -d -f || exit 1
+        git checkout . || exit 1
+        git checkout "ms_$ver" || exit 1
+
+        ############
+        # This is only for git versions
+        ############
+        title "$ver: build"
+        bin/package make || exit 1
+        kshFiles=(./arch/linux.*/bin/ksh)
+        ksh=${kshFiles[0]}
+        [[ -f "$ksh" ]] || exit 1
+
+        saveVersion="ksh93-$ver"
+        [[ ! -f "../bin/${saveVersion}" ]] || exit 1
+        mv "$ksh" "../bin/${saveVersion}" || exit 1
+    ) || {
+        echo "Problem building version $ver"
+        exit 1
+    }
+}
+
+cd "${0%/*}" || exit 1
+
+if [[ "$#" -gt 0 ]]; then
+    for version in "$@"; do
+        bulkBuild "$version" || exit
+    done
+else
+    echo "Specify versions to build"
+fi
