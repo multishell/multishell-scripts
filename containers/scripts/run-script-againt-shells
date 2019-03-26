@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+
+helpMessage() {
+    local scriptName
+
+    scriptName=${0##*/}
+    cat <<EOF
+
+Usage: $scriptName <prefix> <script>
+
+prefix - The beginning of the name of the shells you want to run.
+script - Script to execute. Output is captured and printed after the result
+         line. A pass/fail message is based on the status code.
+
+You use this in conjunction with a script that you write. For instance, we can
+see if the shell allows mapfile fairly easily.
+
+    echo "hash mapfile &> /dev/null" > test-script
+
+Launch a container with the current folder mounted as /mnt.
+
+    docker run -it --rm -v "$PWD:/mnt" -w /mnt fidian/multishell
+
+Within that container, let's execute "test-script" against all versions of
+bash.
+
+    $scriptName apple-bash ./test-script
+    $scriptName bash ./test-script
+
+The output will give you an idea of when mapfile was added. Many lines were
+removed and replaced with "..."
+
+    apple-bash-103: FAIL
+    apple-bash-103.50.1: FAIL
+    ...
+    apple-bash-97: FAIL
+    apple-bash-99: FAIL
+    bash-2.02.0: FAIL
+    bash-2.02.1: FAIL
+    ...
+    bash-3.2.8: FAIL
+    bash-3.2.9: FAIL
+    bash-4.0.0: pass
+    bash-4.0.0-rc1: pass
+    ...
+    bash-5.0.1: pass
+    bash-5.0.2: pass
+EOF
+}
+
+
+if [[ -z "$1" ]]; then
+    echo "Must specify a prefix for the shells to run."
+    helpMessage
+
+    exit 1
+fi
+
+if [[ -z "$2" ]]; then
+    echo "Specify a script name."
+    helpMessage
+
+    exit 1
+fi
+
+shells=(/usr/local/bin/"$1"*)
+
+if [[ "${shells[0]}" == *"*" ]]; then
+    echo "No shells matched your prefix: $1"
+    helpMessage
+
+    exit 1
+fi
+
+while read -r bin; do
+    if [[ ! -L "$bin" ]]; then 
+        shellName=${bin##*/}
+        output=$("$bin" "$2" 2>&1)
+
+        # shellcheck disable=SC2181
+        if [[ $? -eq 0 ]]; then
+            echo "$shellName: pass"
+        else
+            echo "$shellName: FAIL"
+        fi
+
+        if [[ -n "$output" ]]; then
+            echo "$output"
+        fi
+    fi
+done < <(printf "%s\\n" "${shells[@]}" | sort -V)

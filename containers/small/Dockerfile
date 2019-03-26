@@ -1,4 +1,4 @@
-FROM ubuntu:latest as intermediate
+FROM fidian/multishell-scripts:latest as intermediate
 COPY --from=fidian/multishell-apple-bash:latest \
     /usr/local/bin/apple-bash-97 \
     /usr/local/bin/apple-bash-106.220.2 \
@@ -49,10 +49,9 @@ COPY --from=fidian/multishell-zsh:latest \
     /usr/local/bin/zsh-5.6.1 \
     /usr/local/bin/zsh-5.7.1 \
     /usr/local/bin/
-COPY update-links /usr/local/bin
-RUN /usr/local/bin/update-links && rm /usr/local/bin/update-links
+RUN /usr/local/bin/update-links
 
-FROM ubuntu:latest
+FROM fidian/multishell-scripts:latest
 MAINTAINER Tyler Akins <fidian@rumkin.com>
 ENV LC_ALL C
 COPY --from=intermediate /usr/local/bin/ /usr/local/bin/

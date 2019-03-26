@@ -20,13 +20,15 @@ case "$1" in
         ;;
 
     all)
+        pushImage "fidian/multishell-builder"
+        pushImage "fidian/multishell-scripts"
+
         for shell in $(./list-shells); do
             pushImage "fidian/multishell-$shell"
         done
 
         pushImage "fidian/multishell"
         pushImage "fidian/multishell-small"
-        pushImage "fidian/multishell-builder"
         ;;
 
     multishell)

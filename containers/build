@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-cleanup() {
-    rm -f "$bin/update-links"
-}
-
 set -eEu -o pipefail
 cd "${0%/*}" || exit 1
 today=$(date +%Y%m%d)
@@ -16,6 +12,7 @@ case "${1-}" in
 
     all)
         ./build builder
+        ./build scripts
 
         for shell in $(./list-shells); do
             ./build "$shell"
@@ -25,40 +22,28 @@ case "${1-}" in
         ./build multishell
         ;;
 
-    builder)
+    builder | scripts | small)
         echo "*********** $1"
-        cd "$1" || exit
-        image=fidian/multishell-builder
-        docker build -t "$image:latest" -t "$image:$today" -f Dockerfile .
+        image=fidian/multishell-"$1"
+        docker build -t "$image:latest" -t "$image:$today" -f "$1/Dockerfile" "$1"
         ;;
 
     multishell)
         echo "*********** $1"
-        cd "$1" || exit
         image=fidian/multishell
-        docker build -t "$image:latest" -t "$image:$today" -f Dockerfile .
-        ;;
-
-    small)
-        echo "*********** $1"
-        cd "$1" || exit
-        image=fidian/multishell-small
-        docker build -t "$image:latest" -t "$image:$today" -f Dockerfile ../../scripts
+        docker build -t "$image:latest" -t "$image:$today" -f "$1/Dockerfile" "$1"
         ;;
 
     *)
         echo "*********** $1"
+
         if [[ ! -d "../$1/bin" ]]; then
             echo "No such shell: $1" >&2
             exit 1
         fi
 
         bin="../$1/bin"
-        scripts="../scripts"
         image="fidian/multishell-$1"
-
-        trap cleanup EXIT
-        cp "$scripts/update-links" "$bin"
         docker build -t "$image:latest" -t "$image:$today" -f generic/Dockerfile "$bin"
         ;;
 esac
