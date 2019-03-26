@@ -19,6 +19,4 @@ Build Notes
 
 20 - Added endianness from 18. Added compilation on Linux from 18. Used `L_tmpnam` patch from 13. Applied `mamake` termination patch from 4.
 
-23 - Doesn't build `ast.h`. No errors seem to be reported to indicate why. Internally, version is 2012-08-01. Applied `mamake` termination patch from 4.
-
-25 - Doesn't build `ast.h`. No errors seem to be reported to indicate why. Internally, version is 2012-08-01. Applied `mamake` termination patch from 4.
+23 through 25 - Applied `mamake` termination patch from 4. Added endianness from 18. Added compilation on Linux from 18. Used `L_tmpnam` patch from 13.
