@@ -1,6 +1,17 @@
 #!/usr/bin/env bash
+pushImage() {
+    local tag
+
+    echo
+    echo "Pushing: $1"
+    echo
+    tag=$(docker image list "$1" | awk '{print $2}' | grep -vE '^(TAG|latest)$' | sort -V | tail -n 1)
+    docker push "$1:latest"
+    docker push "$1:$tag"
+}
+
+
 cd "${0%/*}" || exit 1
-today=$(date +%Y%m%d)
 
 case "$1" in
     "")
@@ -12,16 +23,19 @@ case "$1" in
         for shellDir in ../*/bin; do
             shell=${shellDir%/*}
             shell=${shell##*/}
-            ./publish "${shell}"
+            pushImage "fidian/multishell-$shell"
         done
+
+        pushImage "fidian/multishell"
+        pushImage "fidian/multishell-small"
+        pushImage "fidian/multishell-builder"
         ;;
 
     multishell)
-        docker push fidian/multishell:latest "fidian/multishell:$today"
+        pushImage fidian/multishell
         ;;
 
     *)
-        image="fidian/multishell-$1"
-        docker push "$image:latest" "$image:$today"
+        pushImage "fidian/multishell-$1"
         ;;
 esac
