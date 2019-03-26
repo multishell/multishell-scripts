@@ -20,9 +20,7 @@ case "$1" in
         ;;
 
     all)
-        for shellDir in ../*/bin; do
-            shell=${shellDir%/*}
-            shell=${shell##*/}
+        for shell in $(./list-shells); do
             pushImage "fidian/multishell-$shell"
         done
 

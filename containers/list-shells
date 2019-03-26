@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+cd "${0%/*}" || exit 1
+
+for dir in ../*/bin; do
+    shellDir=${dir%/*}
+
+    if [[ ! -f "$shellDir/not-ready" ]]; then
+        echo "${shellDir##*/}"
+    fi
+done

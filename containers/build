@@ -17,9 +17,7 @@ case "${1-}" in
     all)
         ./build builder
 
-        for shellBinaryDir in ../*/bin; do
-            shell=${shellBinaryDir%/*}
-            shell=${shell##*/}
+        for shell in $(./list-shells); do
             ./build "$shell"
         done
 
