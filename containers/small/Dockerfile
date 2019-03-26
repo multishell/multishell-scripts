@@ -3,6 +3,12 @@ COPY --from=fidian/multishell-apple-bash:latest \
     /usr/local/bin/apple-bash-97 \
     /usr/local/bin/apple-bash-106.220.2 \
     /usr/local/bin/
+copy --from=fidian/multishell-apple-ksh93:latest \
+    /usr/local/bin/apple-ksh93-18 \
+    /usr/local/bin/apple-ksh93-20 \
+    /usr/local/bin/apple-ksh93-23 \
+    /usr/local/bin/apple-ksh93-25 \
+    /usr/local/bin/
 COPY --from=fidian/multishell-bash:latest \
     /usr/local/bin/bash-2.05.0 \
     /usr/local/bin/bash-3.1.23 \
