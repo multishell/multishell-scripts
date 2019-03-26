@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+title() {
+    echo -n $'\E]2;'"$*"$'\E\\'
+}
+
 set -eEu -o pipefail
 rm -rf git
 mkdir git
@@ -14,6 +18,7 @@ while read -r f; do
     version=${version%.tar*}
 
     echo "$f = $version"
+    title "$version: $f"
 
     # Cleanse git folder
     rm -rf git2
