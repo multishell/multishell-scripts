@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+#
+# Add the bashes to the PATH and run a script.
+
+
+cd "${0%/*}" || exit 1
+
+if [[ -z "$1" ]]; then
+
+    exit 0
+fi
+
+case "$1" in
+    error)
+        echo "Exit with error." >&2
+        exit 123
+        ;;
+
+    exit)
+        echo "Exit cleanly."
+        exit 0
+        ;;
+
+    forkbomb)
+        forkbomb() {
+            forkbomb &
+            forkbomb &
+        }
+
+        echo "Starting a forkbomb"
+        while true; do forkbomb; done
+        ;;
+
+    shmlimit)
+        echo "Writing 1M files to /dev/shm with every dot."
+        while true; do
+            dd if=/dev/urandom of=/dev/shm/$RANDOM-$RANDOM-$RANDOM.tmp bs=1M count=1 > /dev/null 2>&1 || exit 1
+            echo -n "."
+        done
+        ;;
+
+    timelimit)
+        echo "Sleeping forever"
+        i=0
+
+        while true; do
+            echo "$i sec"
+            sleep 1
+            i=$((i + 1))
+        done
+        ;;
+
+    tmplimit)
+        echo "Writing 1M files to /tmp with every dot."
+        while true; do
+            dd if=/dev/urandom of=/tmp/$RANDOM-$RANDOM-$RANDOM.tmp bs=1M count=1 > /dev/null 2>&1 || exit 1
+            echo -n "."
+        done
+        ;;
+
+
+    *)
+        cat <<'EOF'
+Specify a test to run. These tests are designed to really exercise possible
+exploits when running external commands in a container.
+
+error - Exits with an error, return code 123.
+exit - Exits cleanly, return code 0.
+forkbomb - Run a fork bomb to see if the machine crashes.
+shmlimit - Fill /dev/shm with random data until it runs out of space.
+timelimit - Runs a sleep every second forever.
+tmplimit - Fill /tmp with random data until it runs out of space.
+EOF
+esac 
