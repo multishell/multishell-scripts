@@ -45,7 +45,7 @@ case "${1-}" in
         echo "*********** $1"
         cd "$1" || exit
         image=fidian/multishell-small
-        docker build -t "$image:latest" -t "$image:$today" -f Dockerfile .
+        docker build -t "$image:latest" -t "$image:$today" -f Dockerfile ../../scripts
         ;;
 
     *)
