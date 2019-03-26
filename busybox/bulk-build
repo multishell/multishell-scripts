@@ -1,0 +1,151 @@
+#!/usr/bin/env bash
+
+title() {
+    echo -n $'\E]2;'"$*"$'\E\\'
+}
+
+saveBusybox() {
+    local builtVersion saveVersion
+
+    builtVersion=$(./busybox 2>&1 | head -n 1 | awk '{print $2}' | tr -d v)
+    saveVersion="busybox-$1-$builtVersion"
+    [[ ! -f "../bin/${saveVersion}" ]] || return 1
+    mv busybox "../bin/${saveVersion}" || return 1
+}
+
+genericCompile() {
+    local ver
+
+    ver=$1
+    title "$ver: generic compile"
+    make || return 1
+    strip busybox || return 1
+    saveBusybox lash || return 1
+}
+
+swapLine() {
+    sed -i 's/^'"$2"' *$/'"$3"'/' "$1" || return 1
+}
+
+commentConfigHShell() {
+    local uc
+
+    uc="${1^^}"
+    swapLine Config.h "#define BB_$uc" "\/\/#define BB_$uc" || return 1
+    swapLine Config.h "#define BB_FEATURE_$uc" "\/\/#define BB_FEATURE_$uc" || return 1
+    swapLine Config.h "#define BB_FEATURE_SH_IS_$uc" "\/\/#define BB_FEATURE_SH_IS_$uc" || return 1
+}
+
+uncommentConfigHShell() {
+    local uc
+
+    uc="${1^^}"
+    swapLine Config.h "\/\/#define BB_$uc" "#define BB_$uc" || return 1
+    swapLine Config.h "\/\/#define BB_FEATURE_$uc" "#define BB_FEATURE_$uc" || return 1
+    swapLine Config.h "\/\/#define BB_FEATURE_SH_IS_$uc" "#define BB_FEATURE_SH_IS_$uc" || return 1
+}
+
+compileConfigH() {
+    local disable shell shells ver
+
+    ver=$1
+    shells=(ash hush lash msh)
+
+    for shell in "${shells[@]}"; do
+        title "$ver: $shell Config.h Compile"
+        git checkout Config.h || return 1
+
+        # Turn off all shells
+        for disable in "${shells[@]}"; do
+            if [[ "$disable" != "$shell" ]]; then
+                commentConfigHShell "$disable"
+            fi
+        done
+
+        # Enable the one we want
+        uncommentConfigHShell "$shell"
+
+        make || return 1
+        strip busybox || return 1
+        saveBusybox "$shell" || return 1
+    done
+}
+
+disableConfigShell() {
+    swapLine .config "CONFIG_${1^^}=y" "# CONFIG_${1^^} is not set"
+    swapLine .config "CONFIG_FEATURE_SH_IS_${1^^}=y" "# CONFIG_FEATURE_SH_IS_${1^^} is not set"
+}
+
+enableConfigShell() {
+    swapLine .config "# CONFIG_${1^^} is not set" "CONFIG_${1^^}=y"
+    swapLine .config "# CONFIG_FEATURE_SH_IS_${1^^} is not set" "CONFIG_FEATURE_SH_IS_${1^^}=y"
+}
+
+compileConfig() {
+    local ver
+
+    ver=$1
+    shells=(ash hush lash msh)
+    make defconfig || return 1
+
+    for shell in "${shells[@]}"; do
+        title "$ver: $shell Config reconfigure"
+
+        # Turn off all shells
+        for disable in "${shells[@]}"; do
+            disableConfigShell "$disable"
+        done
+
+        disableConfigShell none
+        enableConfigShell "$shell"
+
+        # Fix problems in the generated config
+        swapLine .config "CONFIG_FEATURE_COMMAND_HISTORY=" "CONFIG_FEATURE_COMMAND_HISTORY=15"
+
+        # Erase any prebuilt links to ash_main, hush_main, ..._main.
+        rm -f applets/*.o applets/*.a
+
+        title "$ver: $shell Config make"
+        KBUILD_VERBOSE=1 make || return 1
+        strip busybox || return 1
+        saveBusybox "$shell" || return 1
+    done
+}
+
+bulkBuild() {
+    local ver
+
+    ver=$1
+    echo "Building version: $ver"
+    (
+        set -x
+        cd git
+        title "$ver: Clean"
+        git clean -x -d -f || exit 1
+        git checkout . || exit 1
+        git checkout "ms_$ver" || exit 1
+
+        if grep -q defconfig Makefile &> /dev/null; then
+            compileConfig "$ver"
+        elif [[ -f Config.h ]] && grep -q BB_FEATURE_HUSH Config.h &> /dev/null; then
+            compileConfigH "$ver"
+        elif [[ -f Config.h ]] && grep -q BB_FEATURE_SH_IS_HUSH Config.h &> /dev/null; then
+            compileConfigH "$ver"
+        else
+            genericCompile "$ver" || exit 1
+        fi
+    ) || {
+        echo "Problem building version $ver"
+        exit 1
+    }
+}
+
+cd "${0%/*}" || exit 1
+
+if [[ "$#" -gt 0 ]]; then
+    for version in "$@"; do
+        bulkBuild "$version" || exit
+    done
+else
+    echo "Specify versions to build"
+fi
