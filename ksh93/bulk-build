@@ -4,6 +4,24 @@ title() {
     echo -n $'\E]2;'"$*"$'\E\\'
 }
 
+attemptToBuild() {
+    local startTime lastBuildTime status
+
+    # Try to build repeatedly for at least ten seconds.
+    # 2010-08-26 has a broken build system and needs to
+    # have "bin/package make" ran at least three times.
+    startTime=$(date +%s)
+    lastBuildTime=$startTime
+
+    while [[ $((lastBuildTime - startTime)) -lt 10 ]]; do
+        status=0
+        bin/package make || status=1
+        lastBuildTime=$(date +%s)
+    done
+
+    return $status
+}
+
 bulkBuild() {
     local ver
 
@@ -21,7 +39,7 @@ bulkBuild() {
         # This is only for git versions
         ############
         title "$ver: build"
-        bin/package make || exit 1
+        attemptToBuild || exit 1
         kshFiles=(./arch/linux.*/bin/ksh)
         ksh=${kshFiles[0]}
         [[ -f "$ksh" ]] || exit 1

@@ -23,12 +23,16 @@ COPY --from=fidian/multishell-bash:latest \
 COPY --from=fidian/multishell-dash:latest \
     /usr/local/bin/dash-0.5.10.2 \
     /usr/local/bin/
-COPY --from=fidian/multishell-fish:latest  \
+COPY --from=fidian/multishell-fish:latest \
     /usr/local/bin/fish-1.23.1 \
     /usr/local/bin/fish-2.7.1 \
     /usr/local/bin/fish-3.0.2 \
     /usr/local/bin/
-COPY --from=fidian/multishell-sash:latest  \
+COPY --from=fidian/multishell-ksh93:latest \
+    /usr/local/bin/ksh93-2011-06-30 \
+    /usr/local/bin/ksh93-2012-08-01 \
+    /usr/local/bin/
+COPY --from=fidian/multishell-sash:latest \
     /usr/local/bin/sash-3.8 \
     /usr/local/bin/
 COPY --from=fidian/multishell-tcsh:latest \

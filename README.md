@@ -41,6 +41,8 @@ Available Versions
         * 2.0.0, 2.1.0, 2.1.1, 2.1.2, 2.2b1, 2.2.0, 2.3b1, 2.3b2, 2.3.0, 2.3.1, 2.4b1, 2.4.0, 2.5b1, 2.5.0, 2.6b1, 2.6.0, 2.7b1, 2.7.0, 2.7.1
     * 3.x series
         * 3.0b1, 3.0.0, 3.0.1, 3.0.2
+* ksh93
+    * 2002-06-28, 2004-02-29, 2004-12-25, 2005-02-02, 2006-01-24, 2006-02-14, 2007-01-11, 2007-03-28, 2007-06-28, 2007-11-05, 2008-02-02, 2008-07-25, 2008-11-04, 2008-12-12, 2009-05-01, 2009-05-05, 2009-06-30, 2009-10-21, 2009-11-30, 2009-12-06, 2009-12-11, 2009-12-24, 2010-02-02, 2010-03-09, 2010-05-27, 2010-06-21, 2010-07-01, 2010-08-11, 2010-08-26, 2010-09-24, 2010-10-10, 2010-10-26, 2010-11-22, 2010-12-01, 2010-12-12, 2010-12-21, 2011-01-04, 2011-01-18, 2011-01-27, 2011-01-31, 2011-02-02, 2011-02-08, 2011-04-15, 2011-04-28, 2011-05-05, 2011-06-30, 2012-01-01, 2012-02-02, 2012-02-14, 2012-02-29, 2012-05-18, 2012-05-31, 2012-06-12, 2012-06-20, 2012-06-26, 2012-06-28, 2012-07-27, 2012-08-01
 * sash
     * 3.4, 3.4-fmb, 3.5, 3.5-fmb, 3.6, 3.6-fb, 3.7, 3.7-fb, 3.8
 * tcsh
@@ -63,22 +65,23 @@ The `all-versions` file lists every version that would compile. It corresponds t
 
 Sorry for the confusion. Here's a few examples.
 
-| Shell               | Tag      | Branch      | Command             | Internal version   |
-|---------------------|----------|-------------|---------------------|--------------------|
-| Apple Bash          | 103.50.1 | ms_103.50.1 | apple-bash-103.50.1 | 3.2.57(2)-release  |
-| Apple Bash          | 97       | ms_97       | apple-bash-97       | 3.2.57(2)-release  |
-| Bash                | 3.0.12   | ms_3.0.12   | bash-3.00.12        | 3.00.12(2)-release |
-| Bash                | 3.2      | ms_3.2      | bash-3.2.0          | 3.2.0(2)-release   |
-| Bash                | 4.4.1    | ms_4.4.1    | bash-4.4.1          | 4.4.1(1)-release   |
-| Dash                | 0.5.6.1  | ms_0.5.6.1  | dash-0.5.6.1        | *none*             |
-| Fish                | 2.7.0    | ms_2.7.0    | fish-2.7.0          | 2.7.0              |
-| Fish                | 2.7b1    | ms_2.7b1    | fish-2.7b1          | 2.7b1              |
-| Sash                | 3.7      | ms_3.7      | sash-3.7            | 3.7                |
-| Sash (plus patches) | 3.7-fmb  | ms_3.7-fmb  | sash-3.7-fmb        | 3.7-fmb            |
-| Tcsh                | 6.06     | ms_6.06     | tcsh-6.06.00        | 6.06.00            |
-| Tcsh                | 6.20.00  | ms_6.20.00  | tcsh-6.20.00        | 6.20.00            |
-| Zsh                 | 5.3      | ms_5.3      | zsh-5.3             | 5.3                |
-| Zsh                 | 5.3.1    | ms_5.3.1    | zsh-5.3.1           | 5.3.1              |
+| Shell               | Tag        | Branch        | Command             | Internal version   |
+|---------------------|------------|---------------|---------------------|--------------------|
+| Apple Bash          | 103.50.1   | ms_103.50.1   | apple-bash-103.50.1 | 3.2.57(2)-release  |
+| Apple Bash          | 97         | ms_97         | apple-bash-97       | 3.2.57(2)-release  |
+| Bash                | 3.0.12     | ms_3.0.12     | bash-3.00.12        | 3.00.12(2)-release |
+| Bash                | 3.2        | ms_3.2        | bash-3.2.0          | 3.2.0(2)-release   |
+| Bash                | 4.4.1      | ms_4.4.1      | bash-4.4.1          | 4.4.1(1)-release   |
+| Dash                | 0.5.6.1    | ms_0.5.6.1    | dash-0.5.6.1        | *none*             |
+| Fish                | 2.7.0      | ms_2.7.0      | fish-2.7.0          | 2.7.0              |
+| Fish                | 2.7b1      | ms_2.7b1      | fish-2.7b1          | 2.7b1              |
+| Ksh93               | 2012-01-01 | ms_2012-01-01 | ksh93-2012-01-01    | JM 93u+ 2012-01-01 |
+| Sash                | 3.7        | ms_3.7        | sash-3.7            | 3.7                |
+| Sash (plus patches) | 3.7-fmb    | ms_3.7-fmb    | sash-3.7-fmb        | 3.7-fmb            |
+| Tcsh                | 6.06       | ms_6.06       | tcsh-6.06.00        | 6.06.00            |
+| Tcsh                | 6.20.00    | ms_6.20.00    | tcsh-6.20.00        | 6.20.00            |
+| Zsh                 | 5.3        | ms_5.3        | zsh-5.3             | 5.3                |
+| Zsh                 | 5.3.1      | ms_5.3.1      | zsh-5.3.1           | 5.3.1              |
 
 * Shell: The name of the type of shell that was compiled.
 * Tag: The tag name in our version of the source repository for the original source before any necessary modifications were made. This version number matches the version number of the source distribution.
