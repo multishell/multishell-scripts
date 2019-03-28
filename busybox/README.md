@@ -69,34 +69,42 @@ Build Notes
 
 1.5.1 through 1.5.2 - Used updated `Makefile` from 1.3.0. Applied resource limits from 1.5.0. Fixed sysinfo from 1.3.0. Fixed iphdr from 1.2.0. Fixed system calls from 1.1.1. Run shell by default from 1.3.0.
 
-1.6.0 - Used updated `Makefile` from 1.3.0. Updated resource limit patch. 93b05ab6 Fixed system calls from 1.1.1. Updated sysinfo patch. d095b358 Updated iphdr patch. fcab7318 Fixed system calls from 1.1.1. Updated patch to run shell by default. b41ca149
+1.6.0 - Used updated `Makefile` from 1.3.0. Updated resource limit patch. 93b05ab6 Updated sysinfo patch. d095b358 Updated iphdr patch. fcab7318 Fixed system calls from 1.1.1. Updated patch to run shell by default. 17061881
 
-1.6.1 through 1.6.2 - Used updated `Makefile` from 1.3.0. Applied resource limit patch from 1.6.0. Fixed system calls from 1.1.1. Applied sysinfo and iphdr patches from 1.6.0. Fixed system calls from 1.1.1. Applied change to run shell by default from 1.6.0.
+1.6.1 through 1.6.2 - Used updated `Makefile` from 1.3.0. Applied resource limit patch from 1.6.0. Applied sysinfo and iphdr patches from 1.6.0. Fixed system calls from 1.1.1. Applied change to run shell by default from 1.6.0.
 
-1.7.0 - Used updated `Makefile` from 1.3.0. Applied resource limit patch from 1.6.0. Fixed system calls from 1.1.1. Applied sysinfo patch from 1.6.0. Updated iphdr patch. 4715af4d Fixed conflicting network headers by defining a constant. 57719707 Fixed system calls from 1.1.1. Applied change to run shell by default from 1.6.0.
+1.7.0 - Used updated `Makefile` from 1.3.0. Applied resource limit patch from 1.6.0. Applied sysinfo patch from 1.6.0. Updated iphdr patch. 4715af4d Fixed conflicting network headers by defining a constant. 57719707 Fixed system calls from 1.1.1. Applied change to run shell by default from 1.6.0.
 
-1.7.1 - Used updated `Makefile` from 1.3.0. Applied resource limit patch from 1.6.0. Fixed system calls from 1.1.1. Applied sysinfo patch from 1.6.0. Applied iphdr and network header patches from 1.7.0. Fixed system calls from 1.1.1. Applied change to run shell by default from 1.6.0.
+1.7.1 through 1.7.5 - Used updated `Makefile` from 1.3.0. Applied resource limit patch from 1.6.0. Applied sysinfo patch from 1.6.0. Applied iphdr and network header patches from 1.7.0. Fixed system calls from 1.1.1. Applied change to run shell by default from 1.6.0.
+
+1.8.0 - Used updated `Makefile` from 1.3.0. Applied resource limit patch from 1.6.0. Applied sysinfo patch from 1.6.0. Applied iphdr and network header patches from 1.7.0. Fixed system calls from 1.1.1. Updated change to run shell by default. ce7f75f9
+
+1.8.1 through 1.8.3 - Used updated `Makefile` from 1.3.0. Applied resource limit patch from 1.6.0. Applied sysinfo patch from 1.6.0. Applied iphdr and network header patches from 1.7.0. Fixed system calls from 1.1.1. Added change to run shell by default from 1.8.0.
+
+1.9.0 - Used updated `Makefile` from 1.3.0. Applied network header patches from 1.7.0. Applied resource limit patch from 1.6.0 Updated sysinfo patch. 36515085 Applied iphdr patch from 1.7.0. Fixed system calls from 1.1.1. Updated patch to run the shell by default. 4fa45191
+
+1.9.1 - Used updated `Makefile` from 1.3.0. Applied network header patches from 1.7.0. Applied resource limit patch from 1.6.0 Applied sysinfo patch from 1.9.0. Applied iphdr patch from 1.7.0. Fixed system calls from 1.1.1. Applied patch to run the shell by default from 1.9.0.
+
+1.9.x is broken for ash (Segmentation fault) and lash (applet not found).
+1.10.x is broken for lash (applet not found).
+
+1.10.1 updated a patch
+
+Tried building through 1.11.0, but kept getting problems with the shells and later with directory monitoring.
 
 
 git cherry-pick 1114a503 # Makefile - split deprecated syntax - 1.3.0
+#git cherry-pick 57719707 # Fix conflicting headers to get a single constant - 1.10.1
+#git cherry-pick 0f157357 # Fix conflicting headers to get a single constant - 1.10.1
+git cherry-pick d11a2c1d # Fix conflicting headers to get a single constant - 1.10.3
 git cherry-pick 93b05ab6 # resource.h - rlimit, rusage, etc - 1.6.0
-git cherry-pick d095b358 # include/libbb.h - use system-provided sysinfo - 1.6.0
+git cherry-pick 36515085 # include/libbb.h - use system-provided sysinfo - 1.6.0
 git cherry-pick 4715af4d # networking/libiproute/iptunnel.c - conflicting struct iphdr - 1.7.0
-git cherry-pick 57719707 # Fix conflicting headers to get a single constant - 1.7.0
-git cherry-pick 6842a3f8 # modutils/insmod.c - patched in system calls - 1.1.1
-git cherry-pick b41ca149 # applets/applets.c - run shell by default - 1.6.0
+#git cherry-pick 6842a3f8 # modutils/insmod.c - patched in system calls - 1.1.1
+git cherry-pick aadf78c5 # modutils/insmod.c - patched in system calls - 1.11.0
+git cherry-pick c71b1f52 # libbb/appletlib.c - run shell by default - 1.6.0
 
 
-1.7.0
-1.7.1
-1.7.2
-1.7.3
-1.7.4
-1.7.5
-1.8.0
-1.8.1
-1.8.2
-1.8.3
 1.9.0
 1.9.1
 1.9.2

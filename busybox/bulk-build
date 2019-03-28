@@ -103,7 +103,7 @@ compileConfig() {
         swapLine .config "CONFIG_FEATURE_COMMAND_HISTORY=" "CONFIG_FEATURE_COMMAND_HISTORY=15"
 
         # Erase any prebuilt links to ash_main, hush_main, ..._main.
-        rm -f applets/*.o applets/*.a
+        rm -f applets/*.o applets/*.a libbb/*.o libbb/*.a
 
         title "$ver: $shell Config make"
         KBUILD_VERBOSE=1 make || return 1
