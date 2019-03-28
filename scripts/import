@@ -55,5 +55,5 @@ while read -r f; do
     ) || exit 1
 done < <(
     # shellcheck disable=SC2012
-    ls dash-* | sort -V
+    ls -- *.tgz *.tar.gz | sort -V
 )
