@@ -3,10 +3,13 @@ pushImage() {
     local tag
 
     echo
-    echo "Pushing: $1"
+    echo "Pushing: $1:latest"
     echo
-    tag=$(docker image list "$1" | awk '{print $2}' | grep -vE '^(TAG|latest)$' | sort -V | tail -n 1)
     docker push "$1:latest"
+    tag=$(docker image list "$1" | awk '{print $2}' | grep -vE '^(TAG|latest|<none>)$' | sort -V | tail -n 1)
+    echo
+    echo "Pushing: $1:$tag"
+    echo
     docker push "$1:$tag"
 }
 
