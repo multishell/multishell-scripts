@@ -5,7 +5,7 @@ Apple shipped Bash 2.x early on, then switched to Bash 3.x, but did not proceed 
 
 The source to Bash is either within a `bash` or a `bash-3.2` folder.
 
-Source:  https://opensource.apple.com/tarballs/bash/
+Source:  https://opensource.apple.com/tarballs/bash/ and https://opensource.apple.com/source/bash/
 
 `strlcat` source: http://ftp3.usa.openbsd.org/pub/OpenBSD/src/lib/libc/string/strlcat.c and strlcat.h
 
@@ -40,6 +40,8 @@ Building Notes
 97 through 106.201.1 - Cherry picked removal of `EBADEXEC` from 76.1.
 
 106.220.2 - Identical to 106.201.1. Cherry picked removal of `EBADEXEC` from 76.1.
+
+118.11.1 through 118.40.2 - Cherry picked removal of `EBADEXEC` from 76.1.
 
 Fixing errors:
  * `EBADEXEC` - cherry-pick `ce4f10a` from 76.1
