@@ -21,7 +21,7 @@ bulkBuild() {
         # This is only for git versions
         ############
         title "$ver: build"
-        ARCH_CCFLAGS='' bin/package make || exit 1
+        CCFLAGS='' ARCH_CCFLAGS='' bin/package make || exit 1
         kshFiles=(arch/linux.*/bin/ksh)
         ksh=${kshFiles[0]}
         [[ -f "$ksh" ]] || exit 1
