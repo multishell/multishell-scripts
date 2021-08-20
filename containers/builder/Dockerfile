@@ -1,7 +1,8 @@
 FROM ubuntu:latest
-RUN apt update && apt install -y \
+RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y \
     autoconf \
     bison \
+    byacc \
     bsdmainutils \
     build-essential \
     cmake \
