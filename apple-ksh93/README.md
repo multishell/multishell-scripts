@@ -19,7 +19,7 @@ Build Notes
 
 20 - Added endianness from 18. Added compilation on Linux from 18. Used `L_tmpnam` patch from 13. Applied `mamake` termination patch from 4. Use internal major/minor/makedev from 4.
 
-23 through 27 - Applied `mamake` termination patch from 4. Added endianness from 18. Added compilation on Linux from 18. Used `L_tmpnam` patch from 13. Use internal major/minor/makedev from 4.
+23 through 28 - Applied `mamake` termination patch from 4. Added endianness from 18. Added compilation on Linux from 18. Used `L_tmpnam` patch from 13. Use internal major/minor/makedev from 4.
 
 * `mamake` termination patch from 4 `91afa48`
 * Endianness from 18 `b1db1e6`
