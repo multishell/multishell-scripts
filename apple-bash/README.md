@@ -43,6 +43,8 @@ Building Notes
 
 118.11.1 through 118.40.2 - Cherry picked removal of `EBADEXEC` from 76.1.
 
+123.40.1 - Cherry picked removal of `EBADEXEC` from 76.1. Replaced `xlocale.h` with `locale.h`. a2ecc7f
+
 Fixing errors:
  * `EBADEXEC` - cherry-pick `ce4f10a` from 76.1
  * `strlcat` - cherry-pick `9d69109` from 84.1.2
