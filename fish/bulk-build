@@ -64,9 +64,20 @@ bulkBuild() {
             echo "$ver" > version
         fi
 
-        tryToAutoconf || exit 1
-        tryToConfigure || exit 1
-        tryToBuild "$ver" || exit 1
+        if [[ -d cmake ]]; then
+            (
+                mkdir build
+                cd build
+                cmake ..
+                make
+                cp fish ..
+            )
+        else
+            tryToAutoconf || exit 1
+            tryToConfigure || exit 1
+            tryToBuild "$ver" || exit 1
+        fi
+
         strip fish || exit 1
         builtVersion=$(./fish -v 2>&1)
         saveVersion=fish-${builtVersion##* }
