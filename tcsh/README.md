@@ -97,4 +97,4 @@ Build Notes
 
 6.18.01 through 6.19.00 - Used wait union patch from 6.17.03. Used infinite loop fix from 6.18.00.
 
-6.19.01 through 6.20.00 - Clean build.
+6.19.01 through 6.22.04 - Clean build.
