@@ -1,17 +1,1 @@
-#!/usr/bin/env bash
-#
-# Start a shell
-#
-#   ./start-build-container
-#
-# Build some versions
-#
-#   ./start-build-container 2.02 3.2.1 4.1.2
-
-cd "${0%/*}" || exit 1
-
-if [[ "$#" == 0 ]]; then
-    docker run -it --rm -v "$PWD:/mnt" -w /mnt fidian/multishell-builder
-else
-    docker run -it --rm -v "$PWD:/mnt" -w /mnt fidian/multishell-builder ./bulk-build "$@"
-fi
+../scripts/start-build-container
