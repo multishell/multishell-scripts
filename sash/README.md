@@ -3,7 +3,7 @@ Sash
 
 Stand-alone shell, which has several utilities built into it. Ideal for rescuing a system as it is statically compiled.
 
-Source: https://ftp.gnu.org/gnu/bash/
+Source: http://members.canb.auug.org.au/~dbell/programs/
 
 The "plus patches" version (marked as `*-fmb`) adds `chroot`, `pivot_root`, and `losetup` to versions 3.5 through 3.7. I've also backported it to 3.4. As of version 3.8, those patches are included by the original maintainer.
 
