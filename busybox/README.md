@@ -1,7 +1,7 @@
 BusyBox
 =======
 
-Initially, BusyBox did not start with a shell, but they soon added Lash in 0.43. After that, Ash, Msh, and Hush were included in 0.52. This project builds all shells contained within BusyBox. Each shell will be a separate binary that defaults to running the shell.
+Initially, BusyBox did not start with a shell, but they soon added Lash in 0.43. After that, Ash, Msh, and Hush were included in 0.52. Lash and Msh were eventually dropped. This project builds all shells contained within BusyBox. Each shell will be a separate binary that defaults to running the shell.
 
 Source: https://busybox.net/downloads/
 
@@ -90,100 +90,38 @@ Build Notes
 
 1.10.1 updated a patch
 
-Tried building through 1.11.0, but kept getting problems with the shells and later with directory monitoring.
+1.11.0 Included another patch to avoid gcc's `fcntl.h` and use the Linux one instead. Remove unnecessary inclusion of `sys/file.h`. Added `stime()` patch. Added `major()` and `minor()` patch.
 
+1.11.1 Updated `fcntl.h` patch to include many more files. Updated patch to remove `sys/file.h` to eliminate redefinition of `flock64`. Added patch to stop building v2.4 kernel module tools.
 
-git cherry-pick 1114a503 # Makefile - split deprecated syntax - 1.3.0
-#git cherry-pick 57719707 # Fix conflicting headers to get a single constant - 1.10.1
-#git cherry-pick 0f157357 # Fix conflicting headers to get a single constant - 1.10.1
-git cherry-pick d11a2c1d # Fix conflicting headers to get a single constant - 1.10.3
-git cherry-pick 93b05ab6 # resource.h - rlimit, rusage, etc - 1.6.0
-git cherry-pick 36515085 # include/libbb.h - use system-provided sysinfo - 1.6.0
-git cherry-pick 4715af4d # networking/libiproute/iptunnel.c - conflicting struct iphdr - 1.7.0
-#git cherry-pick 6842a3f8 # modutils/insmod.c - patched in system calls - 1.1.1
-git cherry-pick aadf78c5 # modutils/insmod.c - patched in system calls - 1.11.0
-git cherry-pick c71b1f52 # libbb/appletlib.c - run shell by default - 1.6.0
+1.12.x Updated patch to implement `stime()`.
 
+1.11.0 through 1.13.4 -Typically use these patches: cb384d74 93b05ab6 5aabc4a3 009a632f 4715af4d 1303d9ed 3244c7b2
 
-1.9.0
-1.9.1
-1.9.2
-1.10.0
-1.10.1
-1.10.2
-1.10.3
-1.10.4
-1.11.0
-1.11.1
-1.11.2
-1.11.3
-1.12.0
-1.12.1
-1.12.2
-1.12.3
-1.12.4
-1.13.0
-1.13.1
-1.13.2
-1.13.3
-1.13.4
-1.14.0
-1.14.1
-1.14.2
-1.14.3
-1.14.4
-1.15.0
-1.15.1
-1.15.2
-1.15.3
-1.16.0
-1.16.1
-1.16.2
-1.17.0
-1.17.1
-1.17.2
-1.17.3
-1.17.4
-1.18.0
-1.18.1
-1.18.2
-1.18.3
-1.18.4
-1.18.5
-1.19.0
-1.19.1
-1.19.2
-1.19.3
-1.19.4
-1.20.0
-1.20.1
-1.20.2
-1.21.0
-1.21.1
-1.22.0
-1.22.1
-1.23.0
-1.23.1
-1.23.2
-1.24.0
-1.24.1
-1.24.2
-1.25.0
-1.25.1
-1.26.0
-1.26.1
-1.26.2
-1.27.0
-1.27.1
-1.27.2
-1.28.0
-1.28.1
-1.28.2
-1.28.3
-1.28.4
-1.29.0
-1.29.1
-1.29.2
-1.29.3
-1.30.0
-1.30.1
+1.14.x - Used Makefile patch (cb384d74). Updated rlimit patch (c6dab8a1). New patch to build on JFFS2 (9807727b). 
+
+1.15.x - Used Makefile patch (cb384d74). Used rlimit patch (53e69435). Updated major() patch (3f889f86). Used stime patch (3244c7b2).
+
+1.16.0 - Used Makefile patch (cb384d74). Updated rlimit patch (b31ed008). Used major() patch (3f889f86). Used stime patch (3244c7b2).
+
+1.16.1 through 1.16.2 - Used Makefile patch (cb384d74). Updated rlimit patch (b31ed008). Used major() patch (3f889f86). Used stime patch (3244c7b2). Added a patch to define `PRIO_PROCESS` and `setpriority` (5d09171a). Added a patch to update EXT2 for current includes (e71a71ba).
+
+1.17.0 through 1.17.1 - Updated Makefile patch (91f46e17). Updated EXT2 patch (28126ee8). Added `PRIO_PROCESS` patch (5d09171a). Updated rlimit patch (5a02f3b9). Used major() patch (3f889f86). Used stime patch (3244c7b2).
+
+1.17.2 through 1.17.4 - Updated EXT2 patch (28126ee8). Added `PRIO_PROCESS` patch (5d09171a). Updated rlimit patch (5a02f3b9). Used major() patch (3f889f86). Used stime patch (3244c7b2).
+
+1.18.0 - Backported gen_build_files from 1.18.1 (91ce3536). Added EXT2 patch (28126ee8). Updated rlimit/rusage/PRIO_PROCESS patch (6d9a132b). Updated major/minor patch (32c7f767). Added stime patch (3244c7b2).
+
+1.18.1 through 1.18.5 - Added EXT2 patch (28126ee8). Used limit/rusage/PRIO_PROCESS patch (6d9a132b). Included major/minor patch (32c7f767). Added stime patch (3244c7b2).
+
+1.19.0 - Used limit/rusage/PRIO_PROCESS patch (6d9a132b). Added EXT2 patch (28126ee8). Added stime patch (3244c7b2).
+
+1.19.1 - Used limit/rusage/PRIO_PROCESS patch (6d9a132b). Added EXT2 patch (28126ee8). Added stime patch (3244c7b2). Backported change from 1.19.2 to allow match_fstype to build (b09d9160)
+
+1.19.2 through 1.19.4 - Used limit/rusage/PRIO_PROCESS patch (6d9a132b). Added EXT2 patch (28126ee8). Added stime patch (3244c7b2).
+
+1.20.x - Used limit/rusage/PRIO_PROCESS patch (6d9a132b). Added stime patch (3244c7b2).
+
+1.21.0 through 1.31.1 - Added stime patch (3244c7b2).
+
+1.32.0 through 1.34.0 - No patches needed.

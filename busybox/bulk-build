@@ -46,28 +46,32 @@ uncommentConfigHShell() {
 }
 
 compileConfigH() {
-    local disable shell shells ver
+    local disable shell shells uc ver
 
     ver=$1
     shells=(ash hush lash msh)
 
     for shell in "${shells[@]}"; do
-        title "$ver: $shell Config.h Compile"
-        git checkout Config.h || return 1
+        uc="${shell^^}"
 
-        # Turn off all shells
-        for disable in "${shells[@]}"; do
-            if [[ "$disable" != "$shell" ]]; then
-                commentConfigHShell "$disable"
-            fi
-        done
+        if grep -Eq "BB_(FEATURE_)?$uc" Config.h; then
+            title "$ver: $shell Config.h Compile"
+            git checkout Config.h || return 1
 
-        # Enable the one we want
-        uncommentConfigHShell "$shell"
+            # Turn off all shells
+            for disable in "${shells[@]}"; do
+                if [[ "$disable" != "$shell" ]]; then
+                    commentConfigHShell "$disable"
+                fi
+            done
 
-        make || return 1
-        strip busybox || return 1
-        saveBusybox "$shell" || return 1
+            # Enable the one we want
+            uncommentConfigHShell "$shell"
+
+            make || return 1
+            strip busybox || return 1
+            saveBusybox "$shell" || return 1
+        fi
     done
 }
 
@@ -82,33 +86,38 @@ enableConfigShell() {
 }
 
 compileConfig() {
-    local ver
+    local uc ver
 
     ver=$1
     shells=(ash hush lash msh)
     make defconfig || return 1
 
     for shell in "${shells[@]}"; do
-        title "$ver: $shell Config reconfigure"
+        uc="${shell^^}"
 
-        # Turn off all shells
-        for disable in "${shells[@]}"; do
-            disableConfigShell "$disable"
-        done
+        if grep -Eq "CONFIG_(FEATURE_)?$uc" .config; then
+            grep -E "CONFIG_(FEATURE_)?$uc" .config
+            title "$ver: $shell Config reconfigure"
 
-        disableConfigShell none
-        enableConfigShell "$shell"
+            # Turn off all shells
+            for disable in "${shells[@]}"; do
+                disableConfigShell "$disable"
+            done
 
-        # Fix problems in the generated config
-        swapLine .config "CONFIG_FEATURE_COMMAND_HISTORY=" "CONFIG_FEATURE_COMMAND_HISTORY=15"
+            disableConfigShell none
+            enableConfigShell "$shell"
 
-        # Erase any prebuilt links to ash_main, hush_main, ..._main.
-        rm -f applets/*.o applets/*.a libbb/*.o libbb/*.a
+            # Fix problems in the generated config
+            swapLine .config "CONFIG_FEATURE_COMMAND_HISTORY=" "CONFIG_FEATURE_COMMAND_HISTORY=15"
 
-        title "$ver: $shell Config make"
-        KBUILD_VERBOSE=1 make || return 1
-        strip busybox || return 1
-        saveBusybox "$shell" || return 1
+            # Erase any prebuilt links to ash_main, hush_main, ..._main.
+            rm -f applets/*.o applets/*.a libbb/*.o libbb/*.a
+
+            title "$ver: $shell Config make"
+            KBUILD_VERBOSE=1 make || return 1
+            strip busybox || return 1
+            saveBusybox "$shell" || return 1
+        fi
     done
 }
 
