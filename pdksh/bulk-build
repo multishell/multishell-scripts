@@ -11,13 +11,20 @@ bulkBuild() {
     echo "Building version: $ver"
     (
         set -x
-        cd git/sh || exit 1
+        cd git || exit 1
         title "$ver: Clean"
         git clean -x -d -f || exit 1
         git checkout . || exit 1
         git checkout "ms_$ver" || exit 1
+	[[ -d sh ]] && cd sh
+	[[ -f configure ]] && ./configure
         make || exit 1
-        version=$(./ksh -c 'echo $KSH_VERSION')
+        # Redirecting stdout produces segmentation faults
+        # version=$(./ksh -c 'echo $KSH_VERSION')
+        # Alternate method writes the version to a file
+        rm -rf ksh-version.txt
+        ./ksh -c 'echo $KSH_VERSION > ksh-version.txt'
+        version=$(cat ksh-version.txt)
         [[ -n "$version" ]] || exit 1
         version=$(echo "$version" | cut -d v -f 2 | cut -d ' ' -f 1)
         [[ -n "$version" ]] || exit 1
