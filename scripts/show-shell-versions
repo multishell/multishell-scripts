@@ -52,10 +52,10 @@ groupAndShowVersions() {
     showVersions "        " "${versions[@]}"
 }
 
-cd "${0%/*}/.." || exit 1
+showBinDir() {
+    local bindir=$1 shell=$2
+    local shell versions cmd
 
-for bindir in */bin/; do
-    shell=${bindir%%/*}
     echo "* $shell"
     versions=()
 
@@ -65,7 +65,7 @@ for bindir in */bin/; do
         versions+=("$cmd")
     done < <(
         # shellcheck disable=SC2012
-        ls "$bindir/"* | sort -V
+        ls "$bindir/$shell"* | sort -V
     )
 
     case $shell in
@@ -84,6 +84,25 @@ for bindir in */bin/; do
         *)
             # Show all versions
             showVersions "    " "${versions[@]}"
+            ;;
+    esac
+}
+
+cd "${0%/*}/.." || exit 1
+
+for bindir in */bin/; do
+    shell=${bindir%%/*}
+
+    case "$shell" in
+        busybox)
+            showBinDir "$bindir" "busybox-ash"
+            showBinDir "$bindir" "busybox-hush"
+            showBinDir "$bindir" "busybox-lash"
+            showBinDir "$bindir" "busybox-msh"
+            ;;
+
+        *)
+            showBinDir "$bindir" "$shell"
             ;;
     esac
 done
