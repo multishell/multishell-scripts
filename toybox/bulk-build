@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+title() {
+    echo -n $'\E]2;'"$*"$'\E\\'
+}
+
+bulkBuild() {
+    local ver
+
+    ver=$1
+    echo "Building version: $ver"
+    (
+        set -x
+        cd git
+        title "$ver: Clean"
+        git clean -x -d -f || exit 1
+        git checkout . || exit 1
+        git checkout "ms_$ver" || exit 1
+
+        make allyesconfig || :
+
+        # title "$ver: Configure"
+        # ./configure || exit 1
+
+	title "$ver: make"
+	make || exit 1
+
+        # shellcheck disable=SC2016
+        saveVersion="../bin/toybox-${ver}"
+        [[ ! -f "${saveVersion}" ]] || exit 1
+        mv toybox "${saveVersion}" || exit 1
+    ) || {
+        echo "Problem building version $ver"
+        exit 1
+    }
+}
+
+cd "${0%/*}" || exit 1
+
+if [[ "$#" -gt 0 ]]; then
+    for version in "$@"; do
+        bulkBuild "$version" || exit
+    done
+else
+    echo "Specify versions to build"
+fi
