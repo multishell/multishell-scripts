@@ -29,8 +29,7 @@ for binary in *; do
 done
 
 # Create new symbolic links
-# Thankfully this is a sorted list
-for binary in *; do
+for binary in $(ls | sort -V); do
     clearLine "$binary"
     shorter=$binary
 
