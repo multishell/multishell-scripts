@@ -9,6 +9,7 @@ COPY --from=fidian/multishell-busybox:latest /usr/local/bin/ /usr/local/bin
 COPY --from=fidian/multishell-dash:latest /usr/local/bin/ /usr/local/bin
 COPY --from=fidian/multishell-fish:latest /usr/local/bin/ /usr/local/bin
 COPY --from=fidian/multishell-ksh93:latest /usr/local/bin/ /usr/local/bin
+COPY --from=fidian/multishell-pdksh:latest /usr/local/bin/ /usr/local/bin
 COPY --from=fidian/multishell-sash:latest /usr/local/bin/ /usr/local/bin
 COPY --from=fidian/multishell-tcsh:latest /usr/local/bin/ /usr/local/bin
 COPY --from=fidian/multishell-zsh:latest /usr/local/bin/ /usr/local/bin
