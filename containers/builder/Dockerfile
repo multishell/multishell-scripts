@@ -20,7 +20,7 @@ RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y \
     linux-headers-generic \
     ncurses-dev \
     perl \
-    python \
+    python3 \
     vim \
     xutils-dev
 

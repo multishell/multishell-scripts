@@ -17,6 +17,7 @@ tryToBuild() {
     make -j4 && return 0
     title "$ver: make (serial, try 2)"
     make && return 0
+    echo "$PATH"
 
     return 1
 }

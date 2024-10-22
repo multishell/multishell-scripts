@@ -2,13 +2,7 @@
 
 scriptName=${1:-}
 containerName=${1:-interactive}-$$
-scriptDir=$(cd "${0%/*}/.." && pwd 2> /dev/null)
-
-if [[ -z "$scriptDir" ]]; then
-    echo "Can not find script directory." >&2
-
-    exit 1
-fi
+multishellDir=$(cd "${0%/*}/.." && pwd 2> /dev/null)
 
 # Run a docker container
 cmd=(docker run)
@@ -29,33 +23,21 @@ cmd+=(--shm-size 64M --workdir /dev/shm)
 cmd+=(--tmpfs /tmp)
 
 # Include Multishell as a bound volume
-cmd+=(--volume "$scriptDir:/multishell:ro")
+cmd+=(--volume "$multishellDir:/multishell:ro")
 
 if [[ -z "$scriptName" ]]; then
     # Allocate a TTY and make this interactive
     cmd+=(--interactive --tty)
 fi
 
+# Change to the multishell directory
+cmd+=(--workdir /multishell)
+
 # Use the latest ubuntu image
 cmd+=(fidian/multishell:latest)
 
-# Run the loader script
-cmd+=(/multishell/test-container)
-
-# When a script is passed in, execute that script. Kill it if it takes more
-# than 5 minutes.
-if [[ -n "$scriptName" ]]; then
-    # Add the script name
-    cmd+=("$scriptName")
-
-    # Use a background process to limit execution time and automatically
-    # clean up the dead container.  Unlike using `timeout`, this removes
-    # the container when it is killed.
-    (
-        sleep 300
-        docker container kill "$containerName" > /dev/null 2>&1
-    ) &
-fi
+# Run a shell
+cmd+=(/bin/bash)
 
 # Launch docker
 "${cmd[@]}"
